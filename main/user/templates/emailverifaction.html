@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block title %}
+    
+    
+    {% endblock %}
+</head>
+<body>
+    {% block body %} 
+    <div class="container my-3">
+      <form action="{{ action }}" method="POST">
+     {% csrf_token %}
+     <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">code</label>
+        <input type="text" class="form-control" id="exampleInputPassword1" name="otp">
+      </div>
+      <button type="submit" class="btn btn-primary">Verify</button>
+      
+    </form>
+      
+    </div>  
+     
+  {% endblock %}
+
+</body>
+</html>

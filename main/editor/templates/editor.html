@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>{% block title %} {% endblock %}</title>
+
+</head>
+
+<body>
+  {% block body %}
+
+  <script src="https://cdn.tiny.cloud/1/d5v4ye6k43aaxkhjp9np51kgmilrcln27mxbzgu6v8m613eh/tinymce/5/tinymce.min.js"
+    referrerpolicy="origin"></script>
+  <textarea id="autocompleter-cardmenuitem" type="text" name="o" class='tiny-mce'></textarea>
+
+  <script>
+
+    // Add event listener on keypress
+    var specialChars = JSON.parse("{{data|escapejs}}");
+    tinymce.init({
+      selector: 'textarea#autocompleter-cardmenuitem',
+      init_instance_callback: function (editor) {
+        editor.on('keypress', function (e) {
+          // console.log(e.code);
+          // autocompletor(trigger)
+        });
+      },
+      height: 250,
+      setup: function (editor) {
+        var onAction = function (autocompleteApi, rng, value) {
+          editor.selection.setRng(rng);
+          editor.insertContent(value);
+          autocompleteApi.hide();
+        };
+
+        var getMatchedChars = function (patter) {
+          return specialChars.filter(function (char) {
+            return char.text.indexOf(patter) !== -1;
+          });
+        };
+
+        class autocompleatortemp {
+          autocomp(ch, name) {
+            editor.ui.registry.addAutocompleter(name, {
+              ch: ch,
+              minChars: 0,
+              maxResults:6,
+              columns: 'auto',
+              onAction: onAction,
+              fetch: function (patter) {
+                patter = `${ch}${patter}`
+                return new tinymce.util.Promise(function (resolve) {
+                  var results = getMatchedChars(patter).map(function (char) {
+                    return {
+                      type: 'cardmenuitem',
+                      value: char.value,
+                      label: char.text,
+                      items: [
+                        {
+                          type: 'cardcontainer',
+                          direction: 'vertical',
+                          items: [
+                            {
+                              type: 'cardtext',
+                              text: char.value
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  });
+                  resolve(results);
+                });
+              }
+            });
+          }
+        }
+        // function a1(trigger) {
+        let letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        ];
+        let Aca = new autocompleatortemp()
+        let AcA = new autocompleatortemp()
+        for (let l of letters) {
+          Aca.autocomp(ch = l, name = `small${l}`)
+          AcA.autocomp(ch = l.toUpperCase(), name = `caps${l}`)
+
+        }
+      }
+    });
+
+  </script>
+
+
+  </script>
+  <input type="text" id="message">
+
+  {% endblock %}
+
+</body>
+
+</html>
